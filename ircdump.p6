@@ -8,8 +8,8 @@
 ## After that the exctracted lines can be adjusted
 ## 
 ## Usage:
-##   ircdump.p6 [-l|--lines=<Int>] <url_full>   # default for -l is 20
-##   ircdump.p6 [-u|--until=<Str>] <url_full>   # format for -u is 'HH:MM'
+##   ircdump.p6 [-l|--lines=<Int>] <url>   # default for -l is 20
+##   ircdump.p6 [-u|--until=<Str>] <url>   # format for -u is 'HH:MM'
 
 use v6;
 use LWP::Simple;
@@ -32,11 +32,11 @@ sub get_start_time(Str $url) {
     }
 }
 
-multi MAIN(Str $url_full, Int :l(:$lines) = 20) {
-    my $time_start = get_start_time($url_full);
-    my $txt = LWP::Simple.get($url_full.subst(/\#.*$/,'/text'));
+multi MAIN(Str $url, Int :l(:$lines) = 20) {
+    my $time_start = get_start_time($url);
+    my $txt = LWP::Simple.get($url.subst(/\#.*$/,'/text'));
 
-    say "==== start of discussion on IRC -- cmp. $url_full";
+    say "==== start of discussion on IRC -- cmp. $url";
     my Bool $start_found;
     my Int $line_counter = 0;
     for $txt.lines {
@@ -50,11 +50,11 @@ multi MAIN(Str $url_full, Int :l(:$lines) = 20) {
     say "==== end of discussion on IRC -- powered by $github_link_script";
 }
 
-multi MAIN(Str $url_full, HourMin :u(:$until)) {
-    my $time_start = get_start_time($url_full);
-    my $txt = LWP::Simple.get($url_full.subst(/\#.*$/,'/text'));
+multi MAIN(Str $url, HourMin :u(:$until)) {
+    my $time_start = get_start_time($url);
+    my $txt = LWP::Simple.get($url.subst(/\#.*$/,'/text'));
 
-    say "==== start of IRC discussion -- cmp. $url_full";
+    say "==== start of IRC discussion -- cmp. $url";
     for $txt.lines {
         say pretty_print($_) if /^ $time_start / ff /^ $until /;
     }
